@@ -1,0 +1,51 @@
+body{
+  margin: 0;
+}
+
+#slogan{
+  margin-top: 30px;
+  margin-left: 33%;
+  width: 420px;
+}
+form#login{
+  width: 300px;
+  height: 270px;
+  padding: 50px;
+  background-color: rgba(255,193,7,0.6);
+  margin-left: 34%;
+  margin-top: 30px;
+  border-bottom: lightgray 2px solid;
+}
+input{
+  margin-top: 20px;
+  width: 300px;
+  height: 35px;
+  padding: 0px;
+  text-transform: uppercase;
+  border: none;
+  color:black;
+  }
+button{
+  background-color: #FFC107;
+  color: black;
+  font-weight: 600;
+  padding: 15px;
+  margin-top: 70px;
+  display: block;
+  border: none;
+  margin-left: 32%;
+  width: 110px;
+  border-bottom: lightgray 1px solid;
+}
+button:focus{
+  outline: none;
+}
+button:hover{
+  cursor: pointer;
+}
+a{
+  display: inline-block;
+  margin-top: 10px;
+  color: #E4750C;
+  text-decoration: none;
+}
