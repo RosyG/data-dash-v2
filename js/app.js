@@ -15,6 +15,9 @@ function generationSelection(event) {
   //La variable students me va a mostrar el número de los contenidos que tiene la key students de una location y generation seleccionada, students es un ARRAY de objects, entonces sus values se muestran como objetos.
   var ratings= data[location][generation]["ratings"];//Variable que contiene las calificaciones por sprint de los teachers, jedi y el NPS.
   //console.log(students);
+  var pointsTech = 1800;//puntos máximos de TECH.
+  var pointsHse = 1200;//puntos máximos de HSE.
+  var totalStudents = students.length;
 /*
   var nodeSpan = document.createElement("span");                 // Create a <li> node
     textStudents = students.length.toString();
@@ -30,7 +33,7 @@ function generationSelection(event) {
   desertion (students);
 
   //Función que muestra # de estudiantes que supera el 70% en TECH y HSE.
-  exceedsGoal (students);
+  exceedsGoal (students, pointsTech, pointsHse);
 
   //Función del NPS, promedio de los sprints cursados.
   NetPromoterScore (ratings);
@@ -44,6 +47,26 @@ function generationSelection(event) {
   //Función del promedio de lxs jedi masters.
   averageJedi (ratings);
 
+  google.charts.load('current', {'packages':['table']});
+        google.charts.setOnLoadCallback(drawTable);
+
+        function drawTable() {
+          var data = new google.visualization.DataTable();
+          data.addColumn('string', 'General');
+          data.addColumn('number', 'Sprint');
+          data.addRows([
+            ['Mike',  {v: 10000, f: "10.000"}],
+            ['Jim',   {v:8000,   f: '$8,000'}, ],
+            ['Alice', {v: 12500, f: '$12,500'}],
+            ['Bob',   {v: 7000,  f: '$7,000'}]
+          ]);
+
+          var table = new google.visualization.Table(document.getElementById('dato-2'));
+
+          table.draw(data, {width: '100%', height: '100%'});
+        }
+
+        //console.log(totalStudents + "estudiantes");
   //**************************************************************
 
   var selecSprint=document.getElementById("selecSprint");//Por medio de DOM guardo en una variable las opciones del sprint que puede seleccionar del user.
@@ -65,7 +88,7 @@ function generationSelection(event) {
     //console.log(ratingsSprint);
 
     //Puntuación a l@s Jedi Master.
-    var scoreJedi = ratingsSprint["jedi"];
+    var scoreJedi = ratingsSprint.jedi;
     //Puntuación a l@s profesoes
     var scoreTeacher = ratingsSprint["teacher"];
     //Satisfacción de las estudiantes por su experiencia en Laboratoria.
@@ -77,19 +100,98 @@ function generationSelection(event) {
     var promoterSprint = ratingsSprint["nps"]["promoters"];
     var detractorSprint = ratingsSprint["nps"]["detractors"];
     var npsSprint= promoterSprint - detractorSprint;
-
+//--------------------------------------------------
     //Promedio mayor al 70% en tech.
     var averageTechSprint = 0;
-    for (var i = 0; i < students.length; i++) {
-      var scoreSprint = students[i]["sprints"][sprint];
-      //averageTechSprint = scoreSprint + averageTechSprint;
+    var numberExceed = 0;
+    var numberStudentsActive = 0;
+
+    for (var i = 0; i < students.length; i++) {//Recorriendo el arreglo para sumar la puntuación tech en un Sprint en especifico.
+      sprint = parseInt(sprint);
+      activeStudent = students[i]["active"];//Recorriendo a cada estudiante en su estado ACTIVO
+      if (activeStudent === true) {
+        var scoreTechSprint = students[i]["sprints"][sprint].score.tech;
+        //console.log(sprint);
+        averageTechSprint = (scoreTechSprint/pointsTech) * 100;//obteniendo el porcentaje de cada estudiante.
+        numberStudentsActive = numberStudentsActive + 1;
+
+        if (averageTechSprint >= 70) {
+          numberExceed = numberExceed + 1;//Numero de alumnas que supera el 70%.
+        }
+      } if (activeStudent === false) {
+        console.log("No es activa");
+      }
     }
-    //console.log(averageTechSprint);
-    console.log(scoreSprint);
+    //console.log(numberExceed + "mas del 70%");//Numero de estudiantes que supera el 70%
+    //console.log(numberStudentsActive + "Estudiantes activas");//Toltal de estudiantes activas
+    //Gráfica de las chicas que superan el %70 en promedio por sprint.
+    google.charts.load("current", {packages:["corechart"]});
+    google.charts.setOnLoadCallback(drawChartTechSprint);
+    google.charts.setOnLoadCallback(drawChartHseSprint);
+    function drawChartTechSprint() {
+      var data = google.visualization.arrayToDataTable([
+        ['tech', 'promedio por sprint'],
+        ['Mayor al 70%', numberExceed],
+        ['Menor al 70%', numberStudentsActive - numberExceed],
+      ]);
+      var options = {
+        title: 'Porcentaje por sprint de las estudiantes calificación mayor al 70% en TECH',
+        pieHole: 0.4,
+        slices: {
+         0: { color: '#dfe20f' },
+         1: { color: '#e0e24a' }
+        }
+      };
+      var chart = new google.visualization.PieChart(document.getElementById('tech'));
+      chart.draw(data, options);
+    } //Fin de la función drawChartTechSprint.
+
+
 
     //Promedio mayor al 70% en hse.
+    var averageHseSprint = 0;
+    var numberExceedHse = 0;
+    var numberStudentsActive = 0;
 
+    for (var j = 0; j < students.length; j++) {//Recorriendo el arreglo para sumar la puntuación tech en un Sprint en especifico.
+      sprint = parseInt(sprint);
+      activeStudent = students[j]["active"];//Recorriendo a cada estudiante en su estado ACTIVO
+      if (activeStudent === true) {
+        var scoreHseSprint = students[j]["sprints"][sprint].score.hse;
+        //console.log(sprint);
+        averageHseSprint = (scoreHseSprint/pointsHse) * 100;//obteniendo el porcentaje de cada estudiante más en hse es 1200.
+        numberStudentsActive = numberStudentsActive + 1;
+        console.log("es activa");
+        console.log(averageHseSprint);
+        if (averageHseSprint >= 70) {
+          numberExceedHse = numberExceedHse + 1;//Numero de alumnas que supera el 70%.
+        }
+      } if (activeStudent === false) {
+        console.log("No es activa");
+      }
+    }
+    //console.log(numberExceedHse + "mas del 70%");//Numero de estudiantes que supera el 70%
+    //console.log(numberStudentsActive + "Estudiantes activas");//Toltal de estudiantes activas
 
+    function drawChartHseSprint() {
+    var data = google.visualization.arrayToDataTable([
+      ['hse', 'promedio por sprint'],
+      ['Mayor al 70%', numberExceedHse],
+      ['Menor al 70%', numberStudentsActive - numberExceedHse],
+      ]);
+    var options = {
+      title: 'Porcentaje por sprint de las estudiantes calificación mayor al 70% en HSE',
+      pieHole: 0.4,
+      slices: {
+       0: { color: '#046b03' },
+       1: { color: '#48ce46' }
+      }
+    };
+    var chart = new google.visualization.PieChart(document.getElementById('hse'));
+    chart.draw(data, options);
+  } //Fin de la función drawChartHseSprint.
+
+//_--------------------------------------------------------
     //Gráfica de la satisfación de las estudiantes.
     google.charts.load("current", {packages:["corechart"]});
     google.charts.setOnLoadCallback(drawChartSatisfiedSprint);
@@ -123,7 +225,7 @@ function generationSelection(event) {
       ]);
 
       var options = {
-          title: 'Puntuación promedio de l@s profesores'
+          title: 'Puntuación promedio de l@s profesores por Sprint'
            }
       var chart = new google.visualization.ColumnChart(document.getElementById("teacher"));
       chart.draw(data, options);
@@ -138,15 +240,15 @@ function generationSelection(event) {
       ]);
 
       var options = {
-          title: 'Puntuación promedio de l@s Jedi Master',
+          title: 'Puntuación promedio de l@s Jedi Master por Sprint',
           }
       var chart = new google.visualization.ColumnChart(document.getElementById("jedi"));
       chart.draw(data, options);
     }//Fin de la función drawCharJedi.
   }//Fin de la función selectionSprint().
 
-}//Fin evento change.
-
+}//Fin evento change por SPRINT.
+//*******************************************************************************************
 
 function averageTeachers (allRatings) {
   var averageTeacher = 0;//Variable que guardará el promedio de la calificación a los Teachers.
@@ -195,7 +297,7 @@ function averageJedi (allRatings) {
         ]);
 
         var options = {
-          title: 'Puntuación promedio de l@s profesores',
+          title: 'Puntuación promedio de l@s Jedi Master',
         }
         var chart = new google.visualization.ColumnChart(document.getElementById("jedi"));
         chart.draw(data, options);
@@ -265,9 +367,8 @@ function NetPromoterScore (allRatings) {
 
 
 
-function exceedsGoal(allTheStudents) {
-  var maxTech = 1800;//puntos máximos de TECH.
-  var maxHse = 1200;//puntos máximos de HSE.
+function exceedsGoal(allTheStudents, maxTech, maxHse) {
+
   var pointsTecH = [];
   var pointsHse = [];
   var sprint = [];
@@ -399,3 +500,4 @@ function desertion (allTheStudents) {
     chart.draw(data, options);
   } //Fin de la función drawChartDesertionGeneral.
 }//Fin de desertion ()
+//---------------------------------------++++++++++++++++++++++++++++++++
