@@ -81,7 +81,7 @@ option.sprint{
 section#general{
   height: 1265px;
   width: 100%;
-  background-color: black;
+  background-color: wheat;
 
 }
 section#column-1{
@@ -109,7 +109,7 @@ margin-top: 50px;
 section#desertion{
   background-color: blue;
   display: inline-block;
-  height: 400px;
+  height: 200px;
   width: 100%;
 }
 section#tech{
@@ -119,7 +119,7 @@ section#tech{
   width: 100%;
 }
 section#cifras{
-  background-color: black;
+  background-color: #DBEDFF;
   display: inline-block;
   height: 1210px;
   width: 100%;
@@ -171,4 +171,7 @@ section#teacher{
   display: inline-block;
   height: 400px;
   width: 100%;
+}
+#datos {
+  text-align: center;
 }

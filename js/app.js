@@ -18,13 +18,7 @@ function generationSelection(event) {
   var pointsTech = 1800;//puntos máximos de TECH.
   var pointsHse = 1200;//puntos máximos de HSE.
   var totalStudents = students.length;
-/*
-  var nodeSpan = document.createElement("span");                 // Create a <li> node
-    textStudents = students.length.toString();
-    nodeSpan.innerText(textStudents);                              // Append the text to <li>
-    document.getElementById("cantidad-estudiantes").appendChild(nodeSpan);
-*/
-
+  document.getElementById('dato-1').innerHTML = totalStudents;//Añadiendo la cantidad en la columna derecha.
 //***Variables de los puntos en el LMS****
   var numberStudents= students.length + " " + location + " " + generation;//Número de estudiantes por sede y generación que elige el TM ver.
   //console.log(numberStudents);
@@ -47,27 +41,7 @@ function generationSelection(event) {
   //Función del promedio de lxs jedi masters.
   averageJedi (ratings);
 
-  google.charts.load('current', {'packages':['table']});
-        google.charts.setOnLoadCallback(drawTable);
-
-        function drawTable() {
-          var data = new google.visualization.DataTable();
-          data.addColumn('string', 'General');
-          data.addColumn('number', 'Sprint');
-          data.addRows([
-            ['Mike',  {v: 10000, f: "10.000"}],
-            ['Jim',   {v:8000,   f: '$8,000'}, ],
-            ['Alice', {v: 12500, f: '$12,500'}],
-            ['Bob',   {v: 7000,  f: '$7,000'}]
-          ]);
-
-          var table = new google.visualization.Table(document.getElementById('dato-2'));
-
-          table.draw(data, {width: '100%', height: '100%'});
-        }
-
-        //console.log(totalStudents + "estudiantes");
-  //**************************************************************
+  //******************************FUNCIONES POR SPRINT********************************
 
   var selecSprint=document.getElementById("selecSprint");//Por medio de DOM guardo en una variable las opciones del sprint que puede seleccionar del user.
   selecSprint.addEventListener("change", selectionSprint);//Creando el evento cambio, para detectar lo que el user selecciona.
@@ -100,6 +74,7 @@ function generationSelection(event) {
     var promoterSprint = ratingsSprint["nps"]["promoters"];
     var detractorSprint = ratingsSprint["nps"]["detractors"];
     var npsSprint= promoterSprint - detractorSprint;
+    document.getElementById('dato-4').innerHTML = npsSprint;//NPS visible en la colunma derecha.
 //--------------------------------------------------
     //Promedio mayor al 70% en tech.
     var averageTechSprint = 0;
@@ -122,6 +97,7 @@ function generationSelection(event) {
         console.log("No es activa");
       }
     }
+
     //console.log(numberExceed + "mas del 70%");//Numero de estudiantes que supera el 70%
     //console.log(numberStudentsActive + "Estudiantes activas");//Toltal de estudiantes activas
     //Gráfica de las chicas que superan el %70 en promedio por sprint.
@@ -172,7 +148,6 @@ function generationSelection(event) {
     }
     //console.log(numberExceedHse + "mas del 70%");//Numero de estudiantes que supera el 70%
     //console.log(numberStudentsActive + "Estudiantes activas");//Toltal de estudiantes activas
-
     function drawChartHseSprint() {
     var data = google.visualization.arrayToDataTable([
       ['hse', 'promedio por sprint'],
@@ -248,7 +223,8 @@ function generationSelection(event) {
   }//Fin de la función selectionSprint().
 
 }//Fin evento change por SPRINT.
-//*******************************************************************************************
+//********************FIN DE LAS FUNCIONES POR SPRINT*************
+
 
 function averageTeachers (allRatings) {
   var averageTeacher = 0;//Variable que guardará el promedio de la calificación a los Teachers.
@@ -257,6 +233,7 @@ function averageTeachers (allRatings) {
     averageTeacher = ratingsTeacher + averageTeacher;//Suma de la calificación a lxs Teachers en cada sprint.
   }
   averageTeacher = parseInt((averageTeacher / allRatings.length).toFixed(2));
+  document.getElementById('dato-8').innerHTML = averageTeacher;//puntuación a teachers visible en la colunma derecha.
   //console.log(averageTeacher);//Muestra el promedio de la calificación de los Teaches en todos los sprints.
 
   //Gráfica de las puntuaciones de los teachers en promedio.
@@ -285,6 +262,7 @@ function averageJedi (allRatings) {
       averageJedi = (ratingsJedi + averageJedi);//Suma de la calificación a lxs Jedi Master en cada sprint.
     }
     averageJedi = parseInt((averageJedi / allRatings.length).toFixed(2));
+    document.getElementById('dato-7').innerHTML = averageJedi;//puntuación a jedi master visible en la colunma derecha.
     //console.log(averageJedi);//Muestra el promedio de la calificación de los Jedi Master en todos los sprints.
 
     //Gráfica de las puntuaciones de los Jedi en promedio.
@@ -317,7 +295,7 @@ function satisfiedStudents (allRatings) {
   percentageUnsatisfied = (percentageUnsatisfied / allRatings.length).toFixed(2)
   var percentageSatisfied = 100 - percentageUnsatisfied ; //Porcentaje de la satisfacción promedio en cada SPRINT
   //console.log(percentageSatisfied);//Muestra el porcentaje de SATISFACIÓN en promedio de todos los SPRINTS cursados.
-
+  document.getElementById('dato-9').innerHTML = percentageSatisfied + "%";//porcentaje de alumnas satisfechas visible en la colunma derecha.
   //Gráfica de la satisfación de las estudiantes.
   google.charts.load("current", {packages:["corechart"]});
   google.charts.setOnLoadCallback(drawChartSatisfiedGeneral);
@@ -363,6 +341,7 @@ function NetPromoterScore (allRatings) {
   /* Esto no es valido hacerlo, porque el la DATA ya nos proporciona un promedio de promoter, passive y detractor en cada sprint.
     [Promoters] = [Respuestas 9 o 10] / [Total respuestas] * 100
   */
+  document.getElementById('dato-3').innerHTML = nps.toFixed(2);//NPS visible en la colunma derecha.
 }//Fin de la función NetPromoterScore.
 
 
@@ -407,6 +386,8 @@ function exceedsGoal(allTheStudents, maxTech, maxHse) {
     var totalStudents = parseInt(allTheStudents.length);
     console.log(totalStudents + "total de estudiantes");//Cantidad de estudiantes en la sede y generación.
   }
+  document.getElementById('dato-5').innerHTML = approvedTech;//tech por sprint visible en la colunma derecha.
+  document.getElementById('dato-6').innerHTML = approvedHse;//hse por sprint visible en la colunma derecha.
 
   var percentageApproved = parseInt(((approvedStudent / allTheStudents.length) * 100).toFixed(2));//Procentaje que reprenta en comparación al total de estudiantes.
   var percentageApprovedTech = parseInt(((approvedTech / allTheStudents.length) * 100).toFixed(2));//Porcentaje de alumnas que supera el mínimo solo en TECH.
@@ -474,6 +455,8 @@ function desertion (allTheStudents) {
         notActive= notActive+1;
       }
     }
+
+  document.getElementById('dato-2').innerHTML = notActive;//Cantidad de estudiantes que desertaron visible en la colunma derecha.
   var percentageDesertion =((notActive/allTheStudents.length)*100).toFixed(2); //Al número del porcentaje es necesario redondearlo a dos cifras, es por eso que uso el método .toFixed().
   var percentageActive = 100 - percentageDesertion;
 
